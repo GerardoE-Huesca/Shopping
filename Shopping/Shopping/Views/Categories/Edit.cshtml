@@ -14,11 +14,11 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
             <input type="hidden" asp-for="Id" />
-            <partial name="_Categoria" /> @* Mando a llamar a la vista padre *@
+            <partial name="_Category" /> @* Mando a llamar a la vista padre *@
 
 
             <div class="form-group" mt-2>
-                <input type="submit" value="Gardar" class="btn btn-outline-primary" />
+                <input type="submit" value="Guardar" class="btn btn-outline-primary"/>
                 <a asp-action="Index" class="btn btn-outline-success">Regresar</a>
             </div>
         </form>
