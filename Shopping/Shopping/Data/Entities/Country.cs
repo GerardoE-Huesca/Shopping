@@ -12,6 +12,11 @@ namespace Shopping.Data.Entities
         [Required(ErrorMessage = "El campo {0} es obligatorio.")]
         public string Name { get; set; }
 
+        public ICollection<State> States { get; set; }
+
+        [Display(Name = "Estados")]
+        public int StatesNumber => States == null ? 0 : States.Count;  //Si los estados es igual a nulos, me vas a devolver que el numero de estados es 0
+
 
     }
 }

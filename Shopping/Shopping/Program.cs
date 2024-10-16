@@ -10,6 +10,8 @@ builder.Services.AddDbContext<DataContext>(o =>
     o.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
+builder.Services.AddRazorPages().AddRazorRuntimeCompilation(); //ACTUALIZA LAS VISTAS SIN TENER QUE DEJAR DE CORRER EL PROGRAMA
+
 var app = builder.Build();
 
 
