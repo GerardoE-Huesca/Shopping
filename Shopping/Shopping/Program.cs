@@ -25,6 +25,12 @@ builder.Services.AddIdentity<User, IdentityRole>(cfg =>
     cfg.Password.RequireUppercase = false;
 }).AddEntityFrameworkStores<DataContext>();
 
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.LoginPath = "/Account/NotAuthorized";
+    options.AccessDeniedPath = "/Account/NotAuthorized";
+});
+
 
 //3 maneras de inyectar
 builder.Services.AddTransient<SeedDb>(); //La voy a usar una vez y lo destruye cuando lo utilzan
@@ -55,8 +61,9 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-app.UseHttpsRedirection();
+app.UseStatusCodePagesWithReExecute("/error/{0}");
 
+app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
 app.UseAuthorization();

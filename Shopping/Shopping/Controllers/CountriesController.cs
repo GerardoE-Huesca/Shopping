@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Shopping.Data;
 using Shopping.Data.Entities;
@@ -7,7 +8,8 @@ using System.Diagnostics.Metrics;
 
 namespace Shopping.Controllers
 {
-    public class CountriesController : Controller
+	[Authorize(Roles = "Admin")]
+	public class CountriesController : Controller
     {
         private readonly DataContext _context;
 

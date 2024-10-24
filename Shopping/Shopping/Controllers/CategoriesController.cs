@@ -1,11 +1,13 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Shopping.Data;
 using Shopping.Data.Entities;
 
 namespace Shopping.Controllers
 {
-    public class CategoriesController : Controller
+	[Authorize(Roles = "Admin")]
+	public class CategoriesController : Controller
     {
         private readonly DataContext _context;
 
@@ -19,6 +21,7 @@ namespace Shopping.Controllers
             return View(await _context.Categories.ToListAsync()); //Es como decir "Select * from categories" en la base de datos.
         }
 
+		
         public IActionResult Create()
         {
             return View();
@@ -54,8 +57,10 @@ namespace Shopping.Controllers
             }
             return View(category);
         }
-        // GET: Countries/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+
+		
+		// GET: Countries/Edit/5
+		public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
             {
@@ -123,8 +128,9 @@ namespace Shopping.Controllers
             return View(category);
         }
 
-        // GET: Countries/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+		// GET: Countries/Delete/5
+		
+		public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
             {
