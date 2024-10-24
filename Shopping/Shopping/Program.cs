@@ -38,6 +38,7 @@ builder.Services.AddTransient<SeedDb>(); //La voy a usar una vez y lo destruye c
                                          //builder.Services.AddSingleton<SeeDb>(); //Lo inyecta una vez y no lo destruye.
 
 builder.Services.AddScoped<IUserHelper, UserHelper>();
+builder.Services.AddScoped<ICombosHelper, CombosHelper>();
 builder.Services.AddRazorPages().AddRazorRuntimeCompilation(); //ACTUALIZA LAS VISTAS SIN TENER QUE DEJAR DE CORRER EL PROGRAMA
 
 var app = builder.Build();
