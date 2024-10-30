@@ -11,6 +11,7 @@ namespace Shopping.Helpers
 		Task<IEnumerable<SelectListItem>> GetComboStatesAsync(int countryId);
 
 		Task<IEnumerable<SelectListItem>> GetComboCitiesAsync(int stateId);
-
+		Task<IEnumerable<SelectListItem>> GetComboStatesAsync();
+		Task<IEnumerable<SelectListItem>> GetComboCitiesAsync();
 	}
 }

@@ -22,6 +22,7 @@ namespace Shopping.Helpers
 			})
 				.OrderBy(c => c.Text)
 				.ToListAsync();
+
 			list.Insert(0, new SelectListItem { Text = "[Seleccione una categoría...", Value = "0" });
 
 			return list;
@@ -38,9 +39,15 @@ namespace Shopping.Helpers
 				})
 				.OrderBy(c => c.Text)
 				.ToListAsync();
+
 			list.Insert(0, new SelectListItem { Text = "[Seleccione una ciudad...", Value = "0" });
 
 			return list;
+		}
+
+		public Task<IEnumerable<SelectListItem>> GetComboCitiesAsync()
+		{
+			throw new NotImplementedException();
 		}
 
 		public async Task<IEnumerable<SelectListItem>> GetComboCountriesAsync()
@@ -52,6 +59,7 @@ namespace Shopping.Helpers
 			})
 				.OrderBy(c => c.Text)
 				.ToListAsync();
+
 			list.Insert(0, new SelectListItem { Text = "[Seleccione un Pais...", Value = "0" });
 
 			return list;
@@ -68,9 +76,15 @@ namespace Shopping.Helpers
 			})
 				.OrderBy(c => c.Text)
 				.ToListAsync();
+
 			list.Insert(0, new SelectListItem { Text = "[Seleccione un Estado...", Value = "0" });
 
 			return list;
+		}
+
+		public Task<IEnumerable<SelectListItem>> GetComboStatesAsync()
+		{
+			throw new NotImplementedException();
 		}
 	}
 }
