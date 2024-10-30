@@ -3,7 +3,7 @@ using Microsoft.WindowsAzure.Storage.Blob;
 
 namespace Shopping.Helpers
 {
-	public class BlobHelper : IBlogHelper
+    public class BlobHelper : IBlogHelper
 	{
 		private readonly CloudBlobClient _blobClient;
         public BlobHelper(IConfiguration configuration)
