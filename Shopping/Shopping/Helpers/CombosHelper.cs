@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Shooping.Data;
 using Shopping.Data;
 using Shopping.Data.Entities;
 
