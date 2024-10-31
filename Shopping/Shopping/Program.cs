@@ -16,6 +16,8 @@ builder.Services.AddDbContext<DataContext>(o =>
 
 builder.Services.AddIdentity<User, IdentityRole>(cfg =>
 {
+    cfg.Tokens.AuthenticatorTokenProvider = TokenOptions.DefaultAuthenticatorProvider;
+    cfg.SignIn.RequireConfirmedEmail = true;
     cfg.User.RequireUniqueEmail = true;
     cfg.Password.RequireDigit = false;
     cfg.Password.RequiredUniqueChars = 0;
@@ -27,13 +29,14 @@ builder.Services.AddIdentity<User, IdentityRole>(cfg =>
     cfg.Lockout.AllowedForNewUsers = true;
 
 })
+    .AddDefaultTokenProviders()
     .AddEntityFrameworkStores<DataContext>();
 
-builder.Services.ConfigureApplicationCookie(options =>
-{
-    options.LoginPath = "/Account/NotAuthorized";
-    options.AccessDeniedPath = "/Account/NotAuthorized";
-});
+//builder.Services.ConfigureApplicationCookie(options =>
+//{
+//    options.LoginPath = "/Account/NotAuthorized";
+//    options.AccessDeniedPath = "/Account/NotAuthorized";
+//});
 
 
 //3 maneras de inyectar
@@ -44,6 +47,7 @@ builder.Services.AddTransient<SeedDb>(); //La voy a usar una vez y lo destruye c
 builder.Services.AddScoped<IUserHelper, UserHelper>();
 builder.Services.AddScoped<ICombosHelper, CombosHelper>();
 builder.Services.AddScoped<IBlogHelper, BlobHelper>();
+builder.Services.AddScoped<IMailHelper, MailHelper>();
 builder.Services.AddRazorPages().AddRazorRuntimeCompilation(); //ACTUALIZA LAS VISTAS SIN TENER QUE DEJAR DE CORRER EL PROGRAMA
 
 var app = builder.Build();

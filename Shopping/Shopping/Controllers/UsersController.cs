@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Shopping.Common;
 using Shopping.Data;
 using Shopping.Data.Entities;
 using Shopping.Data.Enums;
@@ -10,29 +11,32 @@ using Shopping.Models;
 namespace Shopping.Controllers
 {
     //[Authorize(Roles = "Admin")]
-	public class UsersController : Controller
-	{
-		private readonly DataContext _context;
+    public class UsersController : Controller
+    {
+        private readonly DataContext _context;
         private readonly IUserHelper _userHelper;
         private readonly IBlogHelper _blogHelper;
         private readonly ICombosHelper _combosHelper;
+        private readonly IMailHelper _mailHelper;
 
-        public UsersController(DataContext context, IUserHelper userHelper, IBlogHelper blogHelper, ICombosHelper combosHelper )
+
+        public UsersController(DataContext context, IUserHelper userHelper, IBlogHelper blogHelper, ICombosHelper combosHelper, IMailHelper mailHelper)
         {
-			_context = context;
+            _context = context;
             _userHelper = userHelper;
             _blogHelper = blogHelper;
             _combosHelper = combosHelper;
+            _mailHelper = mailHelper;
         }
 
-		public async Task<IActionResult> Index()
-		{
-		return View(await _context.Users
-			.Include(u => u.City)
-			.ThenInclude(c => c.State)
-			.ThenInclude(s => s.Country)
-			.ToListAsync());
-		}
+        public async Task<IActionResult> Index()
+        {
+            return View(await _context.Users
+                .Include(u => u.City)
+                .ThenInclude(c => c.State)
+                .ThenInclude(s => s.Country)
+                .ToListAsync());
+        }
 
         public async Task<IActionResult> Create()
         {
@@ -63,7 +67,7 @@ namespace Shopping.Controllers
 
                 model.ImageId = imageId;
                 User user = await _userHelper.AddUserAsync(model);
-                if (user == null) // Si no se puede agregar, el correo ya existe
+                if (user == null)
                 {
                     ModelState.AddModelError(string.Empty, "Este correo ya está siendo usado.");
                     model.Countries = await _combosHelper.GetComboCountriesAsync();
@@ -72,7 +76,27 @@ namespace Shopping.Controllers
                     return View(model);
                 }
 
-                return RedirectToAction("Index", "Home"); // Redirige al Index si el login es exitoso
+                string myToken = await _userHelper.GenerateEmailConfirmationTokenAsync(user);
+                string tokenLink = Url.Action("ConfirmEmail", "Account", new
+                {
+                    userid = user.Id,
+                    token = myToken
+                }, protocol: HttpContext.Request.Scheme);
+
+                Response response = _mailHelper.SendMail(
+                    $"{model.FirstName} {model.LastName}",
+                    model.UserName,
+                    "Shopping - Confirmación de Email",
+                    $"<h1>Shopping - Confirmación de Email</h1>" +
+                        $"Para habilitar el usuario por favor hacer click en el siguiente link:, " +
+                        $"<hr/><br/><p><a href = \"{tokenLink}\">Confirmar Email</a></p>");
+                if (response.IsSuccess)
+                {
+                    ViewBag.Message = "Las instrucciones para habilitar el administrador han sido enviadas al correo.";
+                    return View(model);
+                }
+
+                ModelState.AddModelError(string.Empty, response.Message);
             }
 
             model.Countries = await _combosHelper.GetComboCountriesAsync();
@@ -97,16 +121,15 @@ namespace Shopping.Controllers
 
         public JsonResult GetCities(int stateId)
         {
-            State State = _context.States
+            State state = _context.States
                 .Include(s => s.Cities)
                 .FirstOrDefault(s => s.Id == stateId);
-            if (State == null)
+            if (state == null)
             {
                 return null;
             }
 
-            return Json(State.Cities.OrderBy(c => c.Name));
+            return Json(state.Cities.OrderBy(c => c.Name));
         }
-
     }
 }
