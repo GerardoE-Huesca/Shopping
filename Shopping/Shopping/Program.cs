@@ -64,7 +64,8 @@ internal class Program
             using (IServiceScope scope = scopedFactory.CreateScope())
             {
                 SeedDb service = scope.ServiceProvider.GetService<SeedDb>();
-                service.SeedAsync().Wait();
+                service.SeedAsync()
+                    .Wait();
             }
         }
 

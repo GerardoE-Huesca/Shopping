@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Shooping.Data;
+using Shopping.Data;
 using Shopping.Common;
 using Shopping.Data.Entities;
 using Shopping.Data.Enums;

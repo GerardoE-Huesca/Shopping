@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Shopping.Data.Entities;
 
-namespace Shooping.Data
+namespace Shopping.Data
 {
     public class DataContext : IdentityDbContext<User>
     {

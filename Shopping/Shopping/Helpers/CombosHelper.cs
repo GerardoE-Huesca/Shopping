@@ -4,7 +4,7 @@ using Shopping.Data;
 
 namespace Shopping.Helpers
 {
-	public class CombosHelper : ICombosHelper
+    public class CombosHelper : ICombosHelper
 	{
 		private readonly DataContext _context;
 

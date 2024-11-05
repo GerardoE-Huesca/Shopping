@@ -1,4 +1,4 @@
-namespace Shopping.Data.Entities
+﻿namespace Shopping.Data.Entities
 {
     public class ProductCategory
     {

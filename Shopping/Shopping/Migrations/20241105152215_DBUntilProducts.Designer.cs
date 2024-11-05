@@ -5,14 +5,14 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Shooping.Data;
+using Shopping.Data;
 
 #nullable disable
 
 namespace Shopping.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20241031215524_DBUntilProducts")]
+    [Migration("20241105152215_DBUntilProducts")]
     partial class DBUntilProducts
     {
         /// <inheritdoc />
@@ -158,37 +158,6 @@ namespace Shopping.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("Shooping.Data.Entities.Product", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Description")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<decimal>("Price")
-                        .HasColumnType("decimal(18,2");
-
-                    b.Property<float>("Stock")
-                        .HasColumnType("real");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Name")
-                        .IsUnique();
-
-                    b.ToTable("Products");
-                });
-
             modelBuilder.Entity("Shopping.Data.Entities.Category", b =>
                 {
                     b.Property<int>("Id")
@@ -256,6 +225,37 @@ namespace Shopping.Migrations
                         .IsUnique();
 
                     b.ToTable("Countries");
+                });
+
+            modelBuilder.Entity("Shopping.Data.Entities.Product", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<float>("Stock")
+                        .HasColumnType("real");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("Products");
                 });
 
             modelBuilder.Entity("Shopping.Data.Entities.ProductCategory", b =>
@@ -493,7 +493,7 @@ namespace Shopping.Migrations
                         .WithMany("ProductCategories")
                         .HasForeignKey("CategoryId");
 
-                    b.HasOne("Shooping.Data.Entities.Product", "Product")
+                    b.HasOne("Shopping.Data.Entities.Product", "Product")
                         .WithMany("ProductCategories")
                         .HasForeignKey("ProductId");
 
@@ -504,7 +504,7 @@ namespace Shopping.Migrations
 
             modelBuilder.Entity("Shopping.Data.Entities.ProductImage", b =>
                 {
-                    b.HasOne("Shooping.Data.Entities.Product", "Product")
+                    b.HasOne("Shopping.Data.Entities.Product", "Product")
                         .WithMany("ProductImages")
                         .HasForeignKey("ProductId");
 
@@ -529,13 +529,6 @@ namespace Shopping.Migrations
                     b.Navigation("City");
                 });
 
-            modelBuilder.Entity("Shooping.Data.Entities.Product", b =>
-                {
-                    b.Navigation("ProductCategories");
-
-                    b.Navigation("ProductImages");
-                });
-
             modelBuilder.Entity("Shopping.Data.Entities.Category", b =>
                 {
                     b.Navigation("ProductCategories");
@@ -549,6 +542,13 @@ namespace Shopping.Migrations
             modelBuilder.Entity("Shopping.Data.Entities.Country", b =>
                 {
                     b.Navigation("States");
+                });
+
+            modelBuilder.Entity("Shopping.Data.Entities.Product", b =>
+                {
+                    b.Navigation("ProductCategories");
+
+                    b.Navigation("ProductImages");
                 });
 
             modelBuilder.Entity("Shopping.Data.Entities.State", b =>
