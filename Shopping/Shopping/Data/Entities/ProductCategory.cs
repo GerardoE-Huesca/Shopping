@@ -1,5 +1,3 @@
-﻿using Shooping.Data.Entities;
-
 namespace Shopping.Data.Entities
 {
     public class ProductCategory

@@ -3,12 +3,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Shooping.Data;
 using Shopping.Common;
-using Shopping.Data;
 using Shopping.Data.Entities;
 using Shopping.Data.Enums;
 using Shopping.Helpers;
 using Shopping.Models;
-using System.Security.Cryptography;
 using SignInResult = Microsoft.AspNetCore.Identity.SignInResult;
 
 

@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Shooping.Data;
 using Shopping.Data;
 using Shopping.Data.Entities;
 using Shopping.Helpers;

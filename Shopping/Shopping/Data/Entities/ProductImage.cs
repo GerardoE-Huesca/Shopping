@@ -1,4 +1,3 @@
-﻿using Shooping.Data.Entities;
 using System.ComponentModel.DataAnnotations;
 
 namespace Shopping.Data.Entities
