@@ -44,11 +44,6 @@ namespace Shopping.Helpers
 			return list;
 		}
 
-		public Task<IEnumerable<SelectListItem>> GetComboCitiesAsync()
-		{
-			throw new NotImplementedException();
-		}
-
 		public async Task<IEnumerable<SelectListItem>> GetComboCountriesAsync()
 		{
 			List<SelectListItem> list = await _context.Countries.Select(c => new SelectListItem
@@ -81,9 +76,4 @@ namespace Shopping.Helpers
 			return list;
 		}
 
-		public Task<IEnumerable<SelectListItem>> GetComboStatesAsync()
-		{
-			throw new NotImplementedException();
-		}
-	}
 }
