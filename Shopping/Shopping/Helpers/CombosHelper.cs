@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Shopping.Data;
+using Shopping.Data.Entities;
 
 namespace Shopping.Helpers
 {
@@ -27,53 +28,79 @@ namespace Shopping.Helpers
 			return list;
 		}
 
-		public async Task<IEnumerable<SelectListItem>> GetComboCitiesAsync(int stateId)
-		{
-			List<SelectListItem> list = await _context.Cities
-				.Where(s => s.State.Id == stateId)
-				.Select(c => new SelectListItem
+        public async Task<IEnumerable<SelectListItem>> GetComboCategoriesAsync(IEnumerable<Category> filter)
+        {
+			List<Category> categories = await _context.Categories.ToListAsync();
+            List<Category> categoriesFiltered = new();
+			foreach (Category category in categories)
+			{
+				if (filter.Any(c => c.Id == category.Id))
 				{
-					Text = c.Name,
-					Value = c.Id.ToString(),
-				})
-				.OrderBy(c => c.Text)
-				.ToListAsync();
+					categoriesFiltered.Add(category);
+				}
+			}
 
-			list.Insert(0, new SelectListItem { Text = "[Seleccione una ciudad...", Value = "0" });
+            List<SelectListItem> list = categoriesFiltered.Select(c => new SelectListItem
+            {
+                Text = c.Name,
+                Value = c.Id.ToString(),
+            })
+                .OrderBy(c => c.Text)
+                .ToList();
 
-			return list;
-		}
+            list.Insert(0, new SelectListItem { Text = "[Seleccione una categoría...", Value = "0" });
 
-		public async Task<IEnumerable<SelectListItem>> GetComboCountriesAsync()
-		{
-			List<SelectListItem> list = await _context.Countries.Select(c => new SelectListItem
-			{
-				Text = c.Name,
-				Value = c.Id.ToString(),
-			})
-				.OrderBy(c => c.Text)
-				.ToListAsync();
+            return list;
+        }
 
-			list.Insert(0, new SelectListItem { Text = "[Seleccione un Pais...", Value = "0" });
+        public async Task<IEnumerable<SelectListItem>> GetComboCitiesAsync(int stateId)
+        {
+            List<SelectListItem> list = await _context.Cities
+                 .Where(s => s.State.Id == stateId)
+                 .Select(c => new SelectListItem
+                 {
+                     Text = c.Name,
+                     Value = c.Id.ToString(),
+                 })
+                 .OrderBy(c => c.Text)
+                 .ToListAsync();
 
-			return list;
-		}
+            list.Insert(0, new SelectListItem { Text = "[Seleccione una ciudad...", Value = "0" });
 
-		public async Task<IEnumerable<SelectListItem>> GetComboStatesAsync(int countryId)
-		{
-			List<SelectListItem> list = await _context.States
-				.Where(s => s.Country.Id == countryId)
-				.Select(c => new SelectListItem
-			{
-				Text = c.Name,
-				Value = c.Id.ToString(),
-			})
-				.OrderBy(c => c.Text)
-				.ToListAsync();
+            return list;
+        }
 
-			list.Insert(0, new SelectListItem { Text = "[Seleccione un Estado...", Value = "0" });
+        public async Task<IEnumerable<SelectListItem>> GetComboCountriesAsync()
+        {
+            List<SelectListItem> list = await _context.Countries.Select(c => new SelectListItem
+            {
+                Text = c.Name,
+                Value = c.Id.ToString(),
+            })
+                .OrderBy(c => c.Text)
+                .ToListAsync();
 
-			return list;
-		}
+            list.Insert(0, new SelectListItem { Text = "[Seleccione un Pais...", Value = "0" });
+
+            return list;
+        }
+
+        public async Task<IEnumerable<SelectListItem>> GetComboStatesAsync(int countryId)
+        {
+            List<SelectListItem> list = await _context.States
+                .Where(s => s.Country.Id == countryId)
+                .Select(c => new SelectListItem
+                {
+                    Text = c.Name,
+                    Value = c.Id.ToString(),
+                })
+                .OrderBy(c => c.Text)
+                .ToListAsync();
+
+            list.Insert(0, new SelectListItem { Text = "[Seleccione un Estado...", Value = "0" });
+
+            return list;
+        }
+    }
 
 }
