@@ -49,3 +49,30 @@ body {
         z-index: 1;
         context: ""
 }
+
+.zoom {
+    padding: 5px;
+    background-color: transparent;
+    transition: transform .2s;
+    width: auto;
+    height: auto;
+    margin: 0 auto;
+}
+
+.zoom:hover {
+    -ms-transform: scale(2);
+    -webkit-transform: scale(2);
+    transform: scale(2);
+}
+
+.carousel-inner {
+    width: auto;
+    height: 500px
+    max-heigth: 500px !important;
+}
+
+.carousel-content {
+    color: black;
+    display: flex;
+    text-align: center;
+}

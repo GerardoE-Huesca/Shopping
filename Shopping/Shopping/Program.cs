@@ -52,6 +52,7 @@ internal class Program
         builder.Services.AddScoped<ICombosHelper, CombosHelper>();
         builder.Services.AddScoped<IBlogHelper, BlobHelper>();
         builder.Services.AddScoped<IMailHelper, MailHelper>();
+        builder.Services.AddScoped<IOrdersHelper, OrdersHelper>();
         builder.Services.AddRazorPages().AddRazorRuntimeCompilation(); //ACTUALIZA LAS VISTAS SIN TENER QUE DEJAR DE CORRER EL PROGRAMA
 
         var app = builder.Build();
