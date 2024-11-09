@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Shooping.Common;
 using Shopping.Common;
 using Shopping.Data;
 using Shopping.Data.Entities;
@@ -80,8 +81,7 @@ namespace Shopping.Controllers
 
             HomeViewModel model = new()
             {
-
-                //Products = await PaginatedList<Product>.CreateAsync(query, pageNumber ?? 1, pageSize),
+                Products = await PaginatedList<Product>.CreateAsync(query, pageNumber ?? 1, pageSize),
                 Categories = await _context.Categories.ToListAsync(),
 
             };
