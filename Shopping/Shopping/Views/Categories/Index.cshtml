@@ -5,67 +5,45 @@
 }
 <flash dismissable="true" />
 
-
-<h1>Países</h1>
-
-<p>
-	<a asp-action="Create" class="btn btn-outline-primary">Crear Nuevo</a>
-</p>
-<div class="row">
-	<div class="col-md-12">
-		<div class="panel panel-default">
-			<div class="panel-heading">
-				<h3 class="panel-title">Categorías</h3>
-			</div>
-			<div class="panel-body">
-				<table class="table table-hover table-resposive table-striped" id="MyTable">
-					<thead>
-						<tr>
-							<th>
-								@Html.DisplayNameFor(Model => Model.Name)
-							</th>
-							<th></th>
-						</tr>
-					</thead>
-					<tbody>
-						@foreach (var item in Model)
-						{
-							<tr>
-								<td>
-									@Html.DisplayFor(modelItem => item.Name)
-								</td>
-								<td>
-									<a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-outline-warning"><i class="fa-solid fa-pen-to-square"></i></a>
-									<a asp-action="Details" asp-route-id="@item.Id" class="btn btn-info"><i class="fa-solid fa-circle-info"></i></a>
-									<a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger"><i class="fa-solid fa-trash"></i></a>
-								</td>
-							</tr>
-						}
-					</tbody>
-				</table>
-			</div>
-		</div>
-	</div>
+<!-- Content Wrapper. Contains page content -->
+<div class="container-fluid">
+    <div class="card mt-2">
+        <div class="card-header text-danger">
+            <i class="fa fa-object-group"></i>  <strong>Categorías</strong>
+        </div>
+        <div class="card-body">
+            <div id="view-all">
+                @await Html.PartialAsync("_ViewAll", Model)
+            </div>
+        </div>
+    </div>
 </div>
 
+<!-- <partial name="_AddOrEditDialog" />-->
+<partial name="_DeleteDialog" />
+
 @section Scripts {
-	@{
-		await Html.RenderPartialAsync("_ValidationScriptsPartial");
-	}
-	<script src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 
-	<script type="text/javascript">
-		$(document).ready(function () { //Sintaxis basica de javascript de jquery
-			$('#MyTable').DataTable({ //Busca la tabla MyTable
-				"language": {
-					"url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Spanish.json"
-				},
-				"aLengthMenu": [
-					[25, 50, 100, 200, -1],
-					[25, 50, 100, 200, "Todos"]
-				]
-			});
-		});
-	</script>
+    <script src="~/js/showmodal.js"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#CategoriesTable').DataTable({
+                "language": {
+                    "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Spanish.json"
+                },
+                "aLengthMenu": [
+                    [25, 50, 100, 200, -1],
+                    [25, 50, 100, 200, "Todos"]
+                ]
+            });
+        });
+    </script>
+
+    <script>
+        sc_deleteDialog.openModal('deleteItem', true, 'btnYesDelete', '/Categories/Delete/', false);
+    </script>
 }
-
