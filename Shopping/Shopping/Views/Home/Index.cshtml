@@ -4,7 +4,7 @@
     ViewData["Title"] = "Index";
 }
 
-<style>
+<style type="text/css">
     .card {
         display: flex;
         flex-direction: column;
@@ -16,6 +16,32 @@
         margin: 5px;
     }
 </style>
+
+<h1>Shopping</h1>
+<h3>Categorias</h3>
+
+<div class="mb-2">
+    @foreach (var item in Model.Categories)
+    {
+        <span>@item.Name&nbsp;&nbsp;</span>
+    }
+</div>
+
+<form asp-action="Index" method="get">
+    <div class="form-actions no-color">
+        <p>
+            Buscar por nombre o categoria: <input type="text" name="SearchString" value="@ViewData["CurrentFilter"]" />
+            <input type="submit" value="Buscar" class="btn btn-warning" />
+            <a asp-action="Index" class="btn btn-success">Ver Todos los Productos</a>
+        </p>
+    </div>
+</form>
+
+<div class="mb-2">
+    <a asp-action="Index" asp-route-sertOrder="@ViewData["NameSortParm"]">Ordenar por Nombre</a>&nbsp;&nbsp;
+    <a asp-action="Index" asp-route-sertOrder="@ViewData["PriceSortParm"]">Ordenar por Precio</a>
+</div>
+
 
 @if(Model.Quantity > 0)
 {

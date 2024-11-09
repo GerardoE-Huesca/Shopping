@@ -1,25 +1,22 @@
 ﻿@model Shopping.Data.Entities.Sale
+
 @{
     ViewData["Title"] = "Details";
 }
 
-<h1>Details</h1>
-
 <flash dismissable="true" />
+
+<h1>Detalles</h1>
 
 <div>
     <partial name="_OrderDetails" />
 </div>
 
 <div>
-    <a asp-action="Dispatch" asp-route-id="@Model?.Id" class="btn btn-outline-primary">Despachar</a>
-    <a asp-action="Send" asp-route-id="@Model?.Id" class="btn btn-outline-secondary">Envíar</a>
-    <a asp-action="Confirm" asp-route-id="@Model?.Id" class="btn btn-outline-warning">Confirmar</a>
-    <a asp-action="Cancel" asp-route-id="@Model?.Id" class="btn btn-outline-danger">Cancelar</a>
-    <a asp-action="Index" class="btn btn-outline-success"><i class="fa-solid fa-arrow-rotate-left"></i> Regresar</a>
+    <a asp-action="MyOrders" class="btn btn-outline-success">Regresar</a>
 </div>
 
-<link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" />
+
 <hr />
 
 <div class="row">
@@ -50,7 +47,6 @@
                             <th>
                                 @Html.DisplayNameFor(model => model.SaleDetails.FirstOrDefault().Product.ImageFullPath)
                             </th>
-                            
                         </tr>
                     </thead>
                     <tbody>
@@ -86,17 +82,15 @@
     </div>
 </div>
 
-
 @section Scripts {
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
-    <script src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
 
 
     <script type="text/javascript">
         $(document).ready(function () {
-            $('#ImagesTable').DataTable({
+            $('#MyTable').DataTable({
                 "language": {
                     "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Spanish.json"
                 },
@@ -108,3 +102,5 @@
         });
     </script>
 }
+
+

@@ -1,4 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.Blazor;
 using Shopping.Common;
 using Shopping.Data;
 using Shopping.Data.Entities;
@@ -98,5 +101,6 @@ namespace Shopping.Helpers
             }
             return response;
         }
+
     }
 }

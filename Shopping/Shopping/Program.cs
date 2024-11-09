@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Shopping.Data;
 using Shopping.Data.Entities;
 using Shopping.Helpers;
+using Vereyon.Web;
 
 internal class Program
 {
@@ -47,6 +48,8 @@ internal class Program
         builder.Services.AddTransient<SeedDb>(); //La voy a usar una vez y lo destruye cuando lo utilzan
                                                  //builder.Services.AddScoped<SeeDb>(); //Es que la inyecta cada que necesita y la destruye cuando se deja de ocupar.
                                                  //builder.Services.AddSingleton<SeeDb>(); //Lo inyecta una vez y no lo destruye.
+
+        builder.Services.AddFlashMessage();
 
         builder.Services.AddScoped<IUserHelper, UserHelper>();
         builder.Services.AddScoped<ICombosHelper, CombosHelper>();

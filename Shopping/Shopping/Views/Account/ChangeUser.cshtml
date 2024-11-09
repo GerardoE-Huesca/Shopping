@@ -2,13 +2,13 @@
 @{
     ViewData["Title"] = "ChangeUser";
 }
-
-<h2>Editar</h2>
+<flash dismissable="true" />
 
 <h4>Usuario</h4>
 <hr />
 <div class="row">
 	<div class="col-md-8">
+		<h2>Editar</h2>
 		<form asp-action="ChangeUser" enctype="multipart/form-data">
 			<div asp-validation-summary="ModelOnly" class="text-danger"></div>
 			<input type="hidden" asp-for="Id" />
