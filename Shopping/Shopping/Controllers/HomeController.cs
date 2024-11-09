@@ -35,7 +35,6 @@ namespace Shopping.Controllers
                 .OrderBy(p => p.Description)
                 .ToListAsync();
 
-            HomeViewModel model = new() { Products = products };
             User user = await _userHelper.GetUserAsync(User.Identity.Name);
             if (user != null)
             {
