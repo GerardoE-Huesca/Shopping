@@ -17,6 +17,8 @@ namespace Shopping.Data.Entities
         [Display(Name = "Estados")]
         public int StatesNumber => States == null ? 0 : States.Count;  //Si los estados es igual a nulos, me vas a devolver que el numero de estados es 0
 
+        [Display(Name = "Ciudades")]
+        public int CitiesNumber => States == null ? 0 : States.Sum(s => s.CitiesNumber);
 
     }
 }
