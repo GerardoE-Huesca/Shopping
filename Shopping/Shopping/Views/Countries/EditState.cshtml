@@ -12,7 +12,6 @@
     <div class="col-md-4">
         <form asp-action="EditState">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-
             <input type="hidden" asp-for="Id" />
             <input type="hidden" asp-for="CountryId" />
             <partial name="_State" /> @* Mando a llamar a la vista padre *@
@@ -22,10 +21,6 @@
             </div>
         </form>
     </div>
-</div>
-
-<div>
-</div>
 
 @section Scripts {
     @{

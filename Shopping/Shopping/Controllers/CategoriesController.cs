@@ -26,28 +26,6 @@ namespace Shopping.Controllers
                 .Include(c => c.ProductCategories)
                 .ToListAsync()); //Es como decir "Select * from categories" en la base de datos.
         }
-
-		
-        
-        // GET: Countries/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            Category category = await _context.Categories.FindAsync(id);
-            if (category == null)
-            {
-                return NotFound();
-            }
-
-            return View(category);
-        }
-
-        // GET: Countries/Delete/5
-
         public async Task<IActionResult> Delete(int? id)
         {
             Category category = await _context.Categories.FirstOrDefaultAsync(c => c.Id == id);

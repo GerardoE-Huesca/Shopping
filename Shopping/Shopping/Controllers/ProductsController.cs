@@ -29,7 +29,6 @@ namespace Shopping.Controllers
                 .Include(p => p.ProductCategories)
                 .ThenInclude(pc => pc.Category)
                 .ToListAsync());
-                
         }
 
 		public async Task<IActionResult> Create()
@@ -110,11 +109,6 @@ namespace Shopping.Controllers
 
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
             Product product = await _context.Products.FindAsync(id);
             if (product == null)
             {
@@ -135,7 +129,6 @@ namespace Shopping.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-
         public async Task<IActionResult> Edit(int id, CreateProductViewModel model)
         {
             if (id != model.Id)
@@ -185,7 +178,6 @@ namespace Shopping.Controllers
                 .Include(p => p.ProductCategories)
                 .ThenInclude(pc => pc.Category)
                 .FirstOrDefaultAsync(p => p.Id == id);
-
             if (product == null)
             {
                 return NotFound();
@@ -227,7 +219,6 @@ namespace Shopping.Controllers
                 {
                     Product = product,
                     ImageId = imageId,
-
                 };
 
                 try
@@ -299,7 +290,6 @@ namespace Shopping.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-
         public async Task<IActionResult> AddCategory(AddCategoryProductViewModel model)
         {
             Product product = await _context.Products
@@ -309,7 +299,6 @@ namespace Shopping.Controllers
 
             if (ModelState.IsValid)
             {
-               
                 ProductCategory productCategory = new()
                 {
                     Category = await _context.Categories.FindAsync(model.CategoryId),
@@ -362,9 +351,6 @@ namespace Shopping.Controllers
         {
             if (id == null)
             {
-                return NotFound();
-            }
-
             Product product = await _context.Products
                 .Include(p => p.ProductCategories)
                 .Include(p => p.ProductImages)
@@ -373,22 +359,6 @@ namespace Shopping.Controllers
             {
                 return NotFound();
             }
-
-            return View(product);
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-
-        public async Task<IActionResult> Delete(Product model)
-        {
-            Product product = await _context.Products
-                .Include(p => p.ProductImages)
-                .Include(p => p.ProductCategories)
-                .FirstOrDefaultAsync(p => p.Id == model.Id);
-
-            _context.Products.Remove(product);
-            await _context.SaveChangesAsync();
 
             foreach (ProductImage productImage in product.ProductImages)
             {
