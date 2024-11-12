@@ -3,9 +3,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Shopping.Models
 {
-	public class EditUserViewModel
-	{
-		public string Id { get; set; }
+    public class EditUserViewModel
+    {
+        public string Id { get; set; }
 
         [Display(Name = "Documento")]
         [MaxLength(20, ErrorMessage = "El campo {0} debe tener máximo {1} caractéres.")]
@@ -27,20 +27,20 @@ namespace Shopping.Models
         [Required(ErrorMessage = "El campo {0} es obligatorio.")]
         public string Address { get; set; }
 
-		[Display(Name = "Teléfono")]
-		[MaxLength(50, ErrorMessage = "El campo {0} debe tener máximo {1} caractéres.")]
-		[Required(ErrorMessage = "El campo {0} es obligatorio.")]
-		public string PhoneNumber { get; set; }
+        [Display(Name = "Teléfono")]
+        [MaxLength(50, ErrorMessage = "El campo {0} debe tener máximo {1} caractéres.")]
+        [Required(ErrorMessage = "El campo {0} es obligatorio.")]
+        public string PhoneNumber { get; set; }
 
         [Display(Name = "Foto")]
         public Guid ImageId { get; set; }
 
-		[Display(Name = "Foto")]
+        [Display(Name = "Foto")]
         public string ImageFullPath => ImageId == Guid.Empty
             ? $"https://localhost:7016/images/NoUserImage.PNG"
-            :$"https://Shopping1.blob.core.windows.net/users/{ImageId}";
+            : $"https://Shopping1.blob.core.windows.net/users/{ImageId}";
 
-		[Display(Name = "Image")]
+        [Display(Name = "Image")]
         public IFormFile? ImageFile { get; set; }
 
         [Display(Name = "País")]
@@ -55,7 +55,7 @@ namespace Shopping.Models
         [Required(ErrorMessage = "El campo {0} es obligatorio.")]
         public int StateId { get; set; }
 
-		public IEnumerable<SelectListItem> States { get; set; }
+        public IEnumerable<SelectListItem> States { get; set; }
 
         [Display(Name = "Ciudad")]
         [Range(1, int.MaxValue, ErrorMessage = "Debes de seleccionar una ciudad.")]

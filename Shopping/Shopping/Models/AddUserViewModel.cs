@@ -10,7 +10,7 @@ namespace Shopping.Models
 		[MaxLength(100, ErrorMessage = "El campo {0} debe tener máximo {1} caractéres.")]
 		[Required(ErrorMessage = "El campo {0} es obligatorio.")]
 
-		public string UserName { get; set; }
+		public string Username { get; set; }
 
         [DataType(DataType.Password)]
         [Display(Name = "Contraseña")]

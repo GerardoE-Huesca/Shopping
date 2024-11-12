@@ -1,4 +1,5 @@
 ﻿@model Shopping.Models.ShowCartViewModel
+
 @{
     ViewData["Title"] = "Cart";
 }
@@ -33,12 +34,13 @@
                 </div>
                 <div class="form-group mt-2">
                     <input type="submit" value="Confirmar Pedido" class="btn btn-outline-primary" />
-                    <a asp-action="Index" class="btn btn-outine-success">Regresar</a>
+                    <a asp-action="Index" class="btn btn-outline-success">Regresar</a>
                 </div>
             </form>
         </div>
     </div>
 </div>
+
 
 <div class="row">
     <div class="col-md-12">
@@ -79,7 +81,7 @@
                             <tr>
                                 <td>
                                     <div class="zoom">
-                                        <img src="@item.Product.ImageFullPath style="width:100px;" />
+                                        <img src="@item.Product.ImageFullPath" style="width:100px;" />
                                     </div>
                                 </td>
                                 <td>
@@ -92,10 +94,13 @@
                                     @Html.DisplayFor(modelItem => item.Product.Price)
                                 </td>
                                 <td>
-                                    <a asp-action="DecreaseQuantity" asp-route-id="@item.Id" class="btn btn-secondary"></a>
+                                    <a asp-action="DecreaseQuantity" asp-route-id="@item.Id" class="btn btn-secondary">-</a>
                                 </td>
                                 <td>
-                                    <a asp-action="IncreaseQuantity" asp-route-id="@item.Id" class="btn btn-primary"></a>
+                                    @Html.DisplayFor(modelItem => item.Quantity)
+                                </td>
+                                <td>
+                                    <a asp-action="IncreaseQuantity" asp-route-id="@item.Id" class="btn btn-primary">+</a>
                                 </td>
                                 <td>
                                     @Html.DisplayFor(modelItem => item.Value)
@@ -114,8 +119,10 @@
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-    <script src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
 
     <script type="text/javascript">
         $(document).ready(function () {

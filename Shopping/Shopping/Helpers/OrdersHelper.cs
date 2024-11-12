@@ -1,7 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.Blazor;
+﻿using Microsoft.EntityFrameworkCore;
 using Shopping.Common;
 using Shopping.Data;
 using Shopping.Data.Entities;
@@ -18,6 +15,7 @@ namespace Shopping.Helpers
         {
             _context = context;
         }
+
         public async Task<Response> ProcessOrderAsync(ShowCartViewModel model)
         {
             Response response = await CheckInventoryAsync(model);
@@ -101,6 +99,5 @@ namespace Shopping.Helpers
             }
             return response;
         }
-
     }
 }

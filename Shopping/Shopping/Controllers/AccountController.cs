@@ -2,11 +2,13 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Shopping.Common;
+using Shopping.Data;
 using Shopping.Data.Entities;
 using Shopping.Data.Enums;
 using Shopping.Helpers;
 using Shopping.Models;
 using Vereyon.Web;
+using SignInResult = Microsoft.AspNetCore.Identity.SignInResult;
 
 namespace Shopping.Controllers
 {
@@ -15,26 +17,27 @@ namespace Shopping.Controllers
         private readonly IUserHelper _userHelper;
         private readonly DataContext _context;
         private readonly ICombosHelper _combosHelper;
-        private readonly IBlogHelper _blobHelper;
+        private readonly IBlogHelper _blogHelper;
         private readonly IMailHelper _mailHelper;
         private readonly IFlashMessage _flashMessage;
 
-        public AccountController(IUserHelper userHelper, DataContext context, ICombosHelper combosHelper, IBlogHelper blobHelper, IMailHelper mailHelper, IFlashMessage flashMessage)
+        public AccountController(IUserHelper userHelper, DataContext context, ICombosHelper combosHelper, IBlogHelper blogHelper, IMailHelper mailHelper, IFlashMessage flashMessage)
         {
             _userHelper = userHelper;
             _context = context;
             _combosHelper = combosHelper;
-            _blobHelper = blobHelper;
+            _blogHelper = blogHelper;
             _mailHelper = mailHelper;
             _flashMessage = flashMessage;
         }
 
         public IActionResult Login()
         {
-            if (User.Identity.IsAuthenticated) //Me va devolver el usuario siempre logueado
+            if (User.Identity.IsAuthenticated)
             {
                 return RedirectToAction("Index", "Home");
             }
+
             return View(new LoginViewModel());
         }
 
@@ -48,13 +51,14 @@ namespace Shopping.Controllers
                 {
                     return RedirectToAction("Index", "Home");
                 }
+
                 if (result.IsLockedOut)
                 {
-                    _flashMessage.Danger("Ha superado el máximo número de intentos, su cuenta esta bloqueada, intente de nuevo en 5 minutos.");
+                    _flashMessage.Danger("Ha superado el máximo número de intentos, su cuenta está bloqueada, intente de nuevo en 5 minutos.");
                 }
-                else if(result.IsNotAllowed)
+                else if (result.IsNotAllowed)
                 {
-                    _flashMessage.Danger("El usuario no ha sido habilitado, debes de seguir las instrucciones de correo enviado para poder habilitarte en el sistema.");
+                    _flashMessage.Danger("El usuario no ha sido habilitado, debes de seguir las instrucciones enviadas al correo para poder habilitarlo.");
                 }
                 else
                 {
@@ -69,6 +73,11 @@ namespace Shopping.Controllers
         {
             await _userHelper.LogoutAsync();
             return RedirectToAction("Index", "Home");
+        }
+
+        public IActionResult NotAuthorized()
+        {
+            return View();
         }
 
         public async Task<IActionResult> Register()
@@ -89,51 +98,76 @@ namespace Shopping.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(AddUserViewModel model)
         {
-            if (!ModelState.IsValid)
+            if (ModelState.IsValid)
             {
-            Guid imageId = Guid.Empty;
+                Guid imageId = Guid.Empty;
 
-            if (model.ImageFile != null)
-            {
-                imageId = await _blobHelper.UploadBlobAsync(model.ImageFile, "users");
+                if (model.ImageFile != null)
+                {
+                    imageId = await _blogHelper.UploadBlobAsync(model.ImageFile, "users");
+                }
+
+                model.ImageId = imageId;
+                User user = await _userHelper.AddUserAsync(model);
+                if (user == null)
+                {
+                    _flashMessage.Danger("Este correo ya está siendo usado.");
+                    model.Countries = await _combosHelper.GetComboCountriesAsync();
+                    model.States = await _combosHelper.GetComboStatesAsync(model.CountryId);
+                    model.Cities = await _combosHelper.GetComboCitiesAsync(model.StateId);
+                    return View(model);
+                }
+
+                string myToken = await _userHelper.GenerateEmailConfirmationTokenAsync(user);
+                string tokenLink = Url.Action("ConfirmEmail", "Account", new
+                {
+                    userid = user.Id,
+                    token = myToken
+                }, protocol: HttpContext.Request.Scheme);
+
+                Response response = _mailHelper.SendMail(
+                    $"{model.FirstName} {model.LastName}",
+                    model.Username,
+                    "Shopping - Confirmación de Email",
+                    $"<h1>Shopping - Confirmación de Email</h1>" +
+                        $"Para habilitar el usuario por favor hacer click en el siguiente link:, " +
+                        $"<hr/><br/><p><a href = \"{tokenLink}\">Confirmar Email</a></p>");
+                if (response.IsSuccess)
+                {
+                    _flashMessage.Info("Usuario registrado. Para poder ingresar al sistema, siga las instrucciones que han sido enviadas a su correo.");
+                    return RedirectToAction(nameof(Login));
+                }
+
+                ModelState.AddModelError(string.Empty, response.Message);
             }
 
-            model.ImageId = imageId;
-            User user = await _userHelper.AddUserAsync(model);
-            if (user == null) // Si no se puede agregar, el correo ya existe
-            {
-                _flashMessage.Danger("Este correo ya está siendo usado.");
-                model.Countries = await _combosHelper.GetComboCountriesAsync();
-                model.States = await _combosHelper.GetComboStatesAsync(model.CountryId);
-                model.Cities = await _combosHelper.GetComboCitiesAsync(model.StateId);
-                return View(model);
-            }
-
-            string myToken = await _userHelper.GenerateEmailConfirmationTokenAsync(user);
-            string tokenLink = Url.Action("ConfirmEmail", "Account", new
-            {
-                userid = user.Id,
-                token = myToken
-            }, protocol: HttpContext.Request.Scheme);
-
-            Response response = _mailHelper.SendMail(
-                $"{model.FirstName} {model.LastName}",
-                model.UserName,
-                "Shopping - Confirmación de Email",
-                $"<h1>Shopping - Confirmación de Email</h1>" +
-                    $"Para habilitar el usuario por favor hacer click en el siguiente link:, " +
-                    $"<hr><br><p><a href = \"{tokenLink}\">Confirmar Email<a/></p></br></hr>");
-            if (response.IsSuccess)
-            {
-                _flashMessage.Info("Usuario registrado. Para poder ingresar al sistema, siga las instrucciones que han sido enviadas a su correo.");
-                return RedirectToAction(nameof(Login));
-            }
-            
-            ModelState.AddModelError(string.Empty, response.Message);
-
+            model.Countries = await _combosHelper.GetComboCountriesAsync();
+            model.States = await _combosHelper.GetComboStatesAsync(model.CountryId);
+            model.Cities = await _combosHelper.GetComboCitiesAsync(model.StateId);
             return View(model);
         }
 
+        public async Task<IActionResult> ConfirmEmail(string userId, string token)
+        {
+            if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(token))
+            {
+                return NotFound();
+            }
+
+            User user = await _userHelper.GetUserAsync(new Guid(userId));
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            IdentityResult result = await _userHelper.ConfirmEmailAsync(user, token);
+            if (!result.Succeeded)
+            {
+                return NotFound();
+            }
+
+            return View();
+        }
 
         public JsonResult GetStates(int countryId)
         {
@@ -150,17 +184,16 @@ namespace Shopping.Controllers
 
         public JsonResult GetCities(int stateId)
         {
-            State State = _context.States
+            State state = _context.States
                 .Include(s => s.Cities)
                 .FirstOrDefault(s => s.Id == stateId);
-            if (State == null)
+            if (state == null)
             {
                 return null;
             }
 
-            return Json(State.Cities.OrderBy(c => c.Name));
+            return Json(state.Cities.OrderBy(c => c.Name));
         }
-
 
         public async Task<IActionResult> ChangeUser()
         {
@@ -200,7 +233,7 @@ namespace Shopping.Controllers
 
                 if (model.ImageFile != null)
                 {
-                    imageId = await _blobHelper.UploadBlobAsync(model.ImageFile, "users");
+                    imageId = await _blogHelper.UploadBlobAsync(model.ImageFile, "users");
                 }
 
                 User user = await _userHelper.GetUserAsync(User.Identity.Name);
@@ -221,7 +254,6 @@ namespace Shopping.Controllers
             model.States = await _combosHelper.GetComboStatesAsync(model.CountryId);
             model.Cities = await _combosHelper.GetComboCitiesAsync(model.StateId);
             return View(model);
-
         }
 
         public IActionResult ChangePassword()
@@ -252,7 +284,6 @@ namespace Shopping.Controllers
                     {
                         ModelState.AddModelError(string.Empty, result.Errors.FirstOrDefault().Description);
                     }
-
                 }
                 else
                 {
@@ -261,28 +292,6 @@ namespace Shopping.Controllers
             }
 
             return View(model);
-        }
-
-        public async Task<IActionResult> ConfirmEmail(string userId, string token)
-        {
-            if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(token))
-            {
-                return NotFound();
-            }
-
-            User user = await _userHelper.GetUserAsync(userId);
-            if (user == null)
-            {
-                return NotFound();
-            }
-
-            IdentityResult result = await _userHelper.ConfirmEmailAsync(user, token);
-            if (result.Succeeded)
-            {
-                return NotFound();
-            }
-
-            return View();
         }
 
         public IActionResult RecoverPassword()
@@ -298,8 +307,8 @@ namespace Shopping.Controllers
                 User user = await _userHelper.GetUserAsync(model.Email);
                 if (user == null)
                 {
-                    _flashMessage.Danger("El email no corresponde a ningun usuario registrado.");
-                    return View();
+                    _flashMessage.Danger("El email no corresponde a ningún usuario registrado.");
+                    return View(model);
                 }
 
                 string myToken = await _userHelper.GeneratePasswordResetTokenAsync(user);
@@ -310,40 +319,41 @@ namespace Shopping.Controllers
                 _mailHelper.SendMail(
                     $"{user.FullName}",
                     model.Email,
-                    "Shopping - Recuperación de contraseña",
-                    $"<h1>Shopping - Recuperación de contraseña</h1>" +
+                    "Shopping - Recuperación de Contraseña",
+                    $"<h1>Shopping - Recuperación de Contraseña</h1>" +
                     $"Para recuperar la contraseña haga click en el siguiente enlace:" +
-                    $"<p><a href=\"{link}\">Reset Password</a></p>");
+                    $"<p><a href = \"{link}\">Reset Password</a></p>");
                 _flashMessage.Info("Las instrucciones para recuperar la contraseña han sido enviadas a su correo.");
                 return RedirectToAction(nameof(Login));
             }
+
             return View(model);
         }
 
-		public IActionResult ResetPassword(string token)
-		{
-			return View();
-		}
+        public IActionResult ResetPassword(string token)
+        {
+            return View();
+        }
 
-		[HttpPost]
-		public async Task<IActionResult> ResetPassword(ResetPasswordViewModel model)
-		{
-			User user = await _userHelper.GetUserAsync(model.UserName);
-			if (user != null)
-			{
-				IdentityResult result = await _userHelper.ResetPasswordAsync(user, model.Token, model.Password);
-				if (result.Succeeded)
-				{
-					_flashMessage.Info("Contraseña cambiada con éxito.");
-					return RedirectToAction(nameof(Login));
-				}
+        [HttpPost]
+        public async Task<IActionResult> ResetPassword(ResetPasswordViewModel model)
+        {
+            User user = await _userHelper.GetUserAsync(model.UserName);
+            if (user != null)
+            {
+                IdentityResult result = await _userHelper.ResetPasswordAsync(user, model.Token, model.Password);
+                if (result.Succeeded)
+                {
+                    _flashMessage.Info("Contraseña cambiada con éxito.");
+                    return RedirectToAction(nameof(Login));
+                }
 
                 _flashMessage.Danger("Error cambiando la contraseña.");
-				return View(model);
-			}
+                return View(model);
+            }
 
             _flashMessage.Danger("Usuario no encontrado.");
-			return View(model);
-		}
-	}
+            return View(model);
+        }
+    }
 }

@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Shopping.Data;
+using Shopping.Common;
+using Shopping.Common.Responses;
 using Shopping.Data.Entities;
 using Shopping.Data.Enums;
 using Shopping.Helpers;
@@ -11,17 +12,19 @@ namespace Shopping.Data
         private readonly DataContext _context;
         private readonly IUserHelper _userHelper;
         private readonly IBlogHelper _blogHelper;
+        private readonly IApiService _apiService;
 
-        public SeedDb(DataContext context, IUserHelper userHelper, IBlogHelper blogHelper)
+        public SeedDb(DataContext context, IUserHelper userHelper, IBlogHelper blogHelper, IApiService apiService)
         {
             _context = context;
             _userHelper = userHelper;
             _blogHelper = blogHelper;
+            _apiService = apiService;
         }
 
         public async Task SeedAsync()
         {
-            await _context.Database.EnsureCreatedAsync();   //Crea la base de datos y aplica las migraciones 
+            await _context.Database.EnsureCreatedAsync();
             await CheckCategoriesAsync();
             await CheckCountriesAsync();
             await CheckRolesAsync();
@@ -31,7 +34,6 @@ namespace Shopping.Data
             await CheckUserAsync("4040", "Angelina", "Jolie", "angelina@yopmail.com", "322 311 4620", "Calle Luna Calle Sol", "Angelina.jpg", UserType.User);
             await CheckUserAsync("5050", "Bob", "Marley", "bob@yopmail.com", "322 311 4620", "Calle Luna Calle Sol", "bob.jpg", UserType.User);
             await CheckProductsAsync();
-
         }
 
         private async Task CheckProductsAsync()
@@ -68,7 +70,7 @@ namespace Shopping.Data
 
         private async Task AddProductAsync(string name, decimal price, float stock, List<string> categories, List<string> images)
         {
-            Product product = new()
+            Product prodcut = new()
             {
                 Description = name,
                 Name = name,
@@ -80,17 +82,17 @@ namespace Shopping.Data
 
             foreach (string? category in categories)
             {
-                product.ProductCategories.Add(new ProductCategory { Category = await _context.Categories.FirstOrDefaultAsync(c => c.Name == category) });
+                prodcut.ProductCategories.Add(new ProductCategory { Category = await _context.Categories.FirstOrDefaultAsync(c => c.Name == category) });
             }
 
 
             foreach (string? image in images)
             {
                 Guid imageId = await _blogHelper.UploadBlobAsync($"{Environment.CurrentDirectory}\\wwwroot\\images\\products\\{image}", "products");
-                product.ProductImages.Add(new ProductImage { ImageId = imageId });
+                prodcut.ProductImages.Add(new ProductImage { ImageId = imageId });
             }
 
-            _context.Products.Add(product);
+            _context.Products.Add(prodcut);
         }
 
         private async Task<User> CheckUserAsync(
@@ -121,7 +123,7 @@ namespace Shopping.Data
                     ImageId = imageId
                 };
 
-                await _userHelper.AddUserAsync(user, "123456");
+                await _userHelper.AddUserAsync(user, "CursoDeZulu2020.");
                 await _userHelper.AddUserToRoleAsync(user, userType.ToString());
 
                 string token = await _userHelper.GenerateEmailConfirmationTokenAsync(user);
@@ -139,68 +141,61 @@ namespace Shopping.Data
 
         private async Task CheckCountriesAsync()
         {
-            if (!_context.Countries.Any())
+            //if (!_context.Countries.Any())
+            //{
+            Response responseCountries = await _apiService.GetListAsync<CountryResponse>("/v1", "/countries");
+            if (responseCountries.IsSuccess)
             {
-                _context.Countries.Add(new Country
+                List<CountryResponse> countries = (List<CountryResponse>)responseCountries.Result;
+                foreach (CountryResponse countryResponse in countries)
                 {
-                    Name = "Colombia",
-                    States = new List<State>()
+                    Country country = await _context.Countries.FirstOrDefaultAsync(c => c.Name == countryResponse.Name);
+                    if (country == null)
                     {
-                        new State { 
-                            Name = "Antioquia",
-                            Cities = new List<City>()
-                            {
-                                new City { Name = "Medellin" },
-                                new City { Name = "Envigado" },
-                                new City { Name = "Itagui" },
-                                new City { Name = "Bello" },
-                                new City { Name = "Rionegro" },
-                            } 
-                        },
-                        new State {
-                            Name = "Bogotá",
-                            Cities = new List<City>()
-                            {
-                                new City { Name = "Bosa" },
-                                new City { Name = "Chapinero" },
-                            }
-                        },
-                    }
-                });
-                _context.Countries.Add(new Country
-                {
-                    Name = "Estados Unidos",
-                    States = new List<State>()
-                    {
-                        new State()
+                        country = new() { Name = countryResponse.Name, States = new List<State>() };
+                        Response responseStates = await _apiService.GetListAsync<StateResponse>("/v1", $"/countries/{countryResponse.Iso2}/states");
+                        if (responseStates.IsSuccess)
                         {
-                            Name = "Florida",
-                            Cities = new List<City>()
+                            List<StateResponse> states = (List<StateResponse>)responseStates.Result;
+                            foreach (StateResponse stateResponse in states)
                             {
-                                new City() { Name = "Orlando" },
-                                new City() { Name = "Miami" },
-                                new City() { Name = "Tampa" },
-                                new City() { Name = "Fort Lauderdale" },
+                                State state = country.States.FirstOrDefault(s => s.Name == stateResponse.Name);
+                                if (state == null)
+                                {
+                                    state = new() { Name = stateResponse.Name, Cities = new List<City>() };
+                                    Response responseCities = await _apiService.GetListAsync<CityResponse>("/v1", $"/countries/{countryResponse.Iso2}/states/{stateResponse.Iso2}/cities");
+                                    if (responseCities.IsSuccess)
+                                    {
+                                        List<CityResponse> cities = (List<CityResponse>)responseCities.Result;
+                                        foreach (CityResponse cityResponse in cities)
+                                        {
+                                            if (cityResponse.Name == "Mosfellsbær" || cityResponse.Name == "Șăulița")
+                                            {
+                                                continue;
+                                            }
+                                            City city = state.Cities.FirstOrDefault(c => c.Name == cityResponse.Name);
+                                            if (city == null)
+                                            {
+                                                state.Cities.Add(new City() { Name = cityResponse.Name });
+                                            }
+                                        }
+                                    }
+                                    if (state.CitiesNumber > 0)
+                                    {
+                                        country.States.Add(state);
+                                    }
+                                }
                             }
-                        },
-                        new State()
+                        }
+                        if (country.CitiesNumber > 0)
                         {
-                            Name = "Texas",
-                            Cities = new List<City>()
-                            {
-                                new City() { Name = "Houston" },
-                                new City() { Name = "San Antonio" },
-                                new City() { Name = "Dallas" },
-                                new City() { Name = "Austin" },
-                                new City() { Name = "El paso" },
-                            }
-                        },
+                            _context.Countries.Add(country);
+                            await _context.SaveChangesAsync();
+                        }
                     }
-                });
+                }
             }
-
-            await _context.SaveChangesAsync();
-
+            //}
         }
 
         private async Task CheckCategoriesAsync()
@@ -209,9 +204,10 @@ namespace Shopping.Data
             {
                 _context.Categories.Add(new Category { Name = "Tecnología" });
                 _context.Categories.Add(new Category { Name = "Ropa" });
-                _context.Categories.Add(new Category { Name = "Calzado" });
+                _context.Categories.Add(new Category { Name = "Gamer" });
                 _context.Categories.Add(new Category { Name = "Belleza" });
                 _context.Categories.Add(new Category { Name = "Nutrición" });
+                _context.Categories.Add(new Category { Name = "Calzado" });
                 _context.Categories.Add(new Category { Name = "Deportes" });
                 _context.Categories.Add(new Category { Name = "Mascotas" });
                 _context.Categories.Add(new Category { Name = "Apple" });

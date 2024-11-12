@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Shooping.Helpers;
@@ -8,24 +9,26 @@ using static Shooping.Helpers.ModalHelper;
 
 namespace Shopping.Controllers
 {
-    //[Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin")]
     public class CategoriesController : Controller
     {
         private readonly DataContext _context;
-		private readonly IFlashMessage _flashMessage;
+        private readonly IFlashMessage _flashMessage;
 
-		public CategoriesController(DataContext context, IFlashMessage flashMessage)
+        public CategoriesController(DataContext context, IFlashMessage flashMessage)
         {
             _context = context;
-			_flashMessage = flashMessage;
-		}
+            _flashMessage = flashMessage;
+        }
 
         public async Task<IActionResult> Index()
         {
             return View(await _context.Categories
                 .Include(c => c.ProductCategories)
-                .ToListAsync()); //Es como decir "Select * from categories" en la base de datos.
+                .ToListAsync());
         }
+
+        [NoDirectAccess]
         public async Task<IActionResult> Delete(int? id)
         {
             Category category = await _context.Categories.FirstOrDefaultAsync(c => c.Id == id);

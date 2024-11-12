@@ -118,14 +118,14 @@ namespace Shopping.Controllers
                 return NotFound();
             }
 
-            TemporalSale temporaleSale = new()
+            TemporalSale temporalSale = new()
             {
                 Product = product,
                 Quantity = 1,
                 User = user
             };
 
-            _context.TemporalSales.Add(temporaleSale);
+            _context.TemporalSales.Add(temporalSale);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
@@ -220,7 +220,7 @@ namespace Shopping.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        //[Authorize]
+        [Authorize]
         public async Task<IActionResult> ShowCart()
         {
             User user = await _userHelper.GetUserAsync(User.Identity.Name);
@@ -229,7 +229,7 @@ namespace Shopping.Controllers
                 return NotFound();
             }
 
-            List<TemporalSale>? temporalSales = await _context.TemporalSales
+            List<TemporalSale> temporalSales = await _context.TemporalSales
                 .Include(ts => ts.Product)
                 .ThenInclude(p => p.ProductImages)
                 .Where(ts => ts.User.Id == user.Id)
@@ -244,9 +244,9 @@ namespace Shopping.Controllers
             return View(model);
         }
 
+
         [HttpPost]
         [ValidateAntiForgeryToken]
-
         public async Task<IActionResult> ShowCart(ShowCartViewModel model)
         {
             User user = await _userHelper.GetUserAsync(User.Identity.Name);
@@ -284,6 +284,7 @@ namespace Shopping.Controllers
             {
                 return NotFound();
             }
+
             if (temporalSale.Quantity > 1)
             {
                 temporalSale.Quantity--;
@@ -293,6 +294,7 @@ namespace Shopping.Controllers
 
             return RedirectToAction(nameof(ShowCart));
         }
+
         public async Task<IActionResult> IncreaseQuantity(int? id)
         {
             if (id == null)
@@ -305,12 +307,10 @@ namespace Shopping.Controllers
             {
                 return NotFound();
             }
-            if (temporalSale.Quantity > 1)
-            {
-                temporalSale.Quantity++;
-                _context.TemporalSales.Update(temporalSale);
-                await _context.SaveChangesAsync();
-            }
+
+            temporalSale.Quantity++;
+            _context.TemporalSales.Update(temporalSale);
+            await _context.SaveChangesAsync();
 
             return RedirectToAction(nameof(ShowCart));
         }
@@ -362,7 +362,7 @@ namespace Shopping.Controllers
         {
             if (id != model.Id)
             {
-                return View(model);
+                return NotFound();
             }
 
             if (ModelState.IsValid)
@@ -381,7 +381,7 @@ namespace Shopping.Controllers
                     return View(model);
                 }
 
-                return RedirectToAction(nameof(ShowCart));    
+                return RedirectToAction(nameof(ShowCart));
             }
 
             return View(model);

@@ -11,7 +11,7 @@ using Vereyon.Web;
 
 namespace Shopping.Controllers
 {
-    //[Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin")]
     public class ProductsController : Controller
     {
         private readonly DataContext _context;

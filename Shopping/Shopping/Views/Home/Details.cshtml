@@ -1,4 +1,5 @@
 ﻿@model Shopping.Models.AddProductToCartViewModel
+
 @{
     ViewData["Title"] = "Details";
 }
@@ -12,54 +13,56 @@
                 @{
                     var first = true;
                 }
-                @foreach (var item in Model?.ProductImages)
+                @foreach (var item in @Model?.ProductImages)
                 {
-                    <div class="carousel-item @(first?Html.Raw("Active"):Html.Raw(""))">
+                    <div class="carousel-item @(first?Html.Raw("active"):Html.Raw(""))">
                         <img class="d-block w-100" src="@item.ImageFullPath" alt="@item.Id">
                     </div>
                     first = false;
                 }
             </div>
-            <a id="ImagesCarouselPrev" class="carousel-control-prev" href="#ImagesCarousel" role="button" data-slide="prev">
+            <a id="ImagesCarouselPrev" class="carousel-control-prev" href="#ImagesCarousel" role="button"
+               data-slide="prev">
                 <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                 <span class="sr-only btn btn-secondary">Anterior</span>
             </a>
-            <a id="ImagesCarouselNext" class="carousel-control-next" href="#ImagesCarousel" role="button" data-slide="next">
+            <a id="ImagesCarouselNext" class="carousel-control-next" href="#ImagesCarousel" role="button"
+               data-slide="next">
                 <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                <span class="sr-only btn btn-primary">Siguiente</span>
+                <span class="sr-only btn-primary btn">Siguiente</span>
             </a>
         </div>
     </div>
     <div class="col-md-6">
         <dl class="row">
             <dt class="col-sm-4">
-                @Html.DisplayNameFor(Model => Model.Description)
+                @Html.DisplayNameFor(model => model.Description)
             </dt>
             <dd class="col-sm-8">
-                @Html.DisplayFor(Model => Model.Description)
+                @Html.DisplayFor(model => model.Description)
             </dd>
             <dt class="col-sm-4">
-                @Html.DisplayNameFor(Model => Model.Price)
+                @Html.DisplayNameFor(model => model.Price)
             </dt>
             <dd class="col-sm-8">
-                @Html.DisplayFor(Model => Model.Price)
+                @Html.DisplayFor(model => model.Price)
             </dd>
             <dt class="col-sm-4">
-                @Html.DisplayNameFor(Model => Model.Stock)
+                @Html.DisplayNameFor(model => model.Stock)
             </dt>
             <dd class="col-sm-8">
-                @Html.DisplayFor(Model => Model.Stock)
+                @Html.DisplayFor(model => model.Stock)
             </dd>
             <dt class="col-sm-4">
-                @Html.DisplayNameFor(Model => Model.Categories)
+                @Html.DisplayNameFor(model => model.Categories)
             </dt>
             <dd class="col-sm-8">
-                @Html.DisplayFor(Model => Model.Categories)
+                @Html.DisplayFor(model => model.Categories)
             </dd>
             <div class="col-md-12">
                 <form asp-action="Details">
                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                    <input type="hidden" asp-for="Id"/>
+                    <input type="hidden" asp-for="Id" />
                     <div class="form-group">
                         <label asp-for="Remarks" class="control-label"></label>
                         <input asp-for="Remarks" class="form-control" />
@@ -81,17 +84,19 @@
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#ImagesCarousel").carousel();
+            $("#ImagesCarouselPrev").click(function () {
+                $("#ImagesCarousel").carousel("prev");
+            });
+            $("#ImagesCarouselNext").click(function () {
+                $("#ImagesCarousel").carousel("next");
+            });
+        });
+    </script>
 }
-<script type="text/javascript">
-    $(document).ready(function () {
-        $("#ImagesCarousel").carousel();
-        $("ImagesCarouselPrev").click(function(){
-            $("#ImagesCarousel").carousel("prev");
-        });
-        $("ImagesCarouselNext").click(function(){
-            $("#ImagesCarousel").carousel("next");
-        });
-    });
-</script>
 

@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace Shooping.Common
+namespace Shopping.Common
 {
     public class PaginatedList<T> : List<T>
     {

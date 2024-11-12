@@ -6,10 +6,11 @@ using Shopping.Data.Entities;
 using Shopping.Data.Enums;
 using Shopping.Helpers;
 using Shopping.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Shopping.Controllers
 {
-    //[Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin")]
     public class UsersController : Controller
     {
         private readonly DataContext _context;
@@ -17,7 +18,6 @@ namespace Shopping.Controllers
         private readonly IBlogHelper _blogHelper;
         private readonly ICombosHelper _combosHelper;
         private readonly IMailHelper _mailHelper;
-
 
         public UsersController(DataContext context, IUserHelper userHelper, IBlogHelper blogHelper, ICombosHelper combosHelper, IMailHelper mailHelper)
         {
@@ -84,7 +84,7 @@ namespace Shopping.Controllers
 
                 Response response = _mailHelper.SendMail(
                     $"{model.FirstName} {model.LastName}",
-                    model.UserName,
+                    model.Username,
                     "Shopping - Confirmación de Email",
                     $"<h1>Shopping - Confirmación de Email</h1>" +
                         $"Para habilitar el usuario por favor hacer click en el siguiente link:, " +

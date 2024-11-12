@@ -2,7 +2,6 @@
 using MimeKit;
 using Shopping.Common;
 
-
 namespace Shopping.Helpers
 {
     public class MailHelper : IMailHelper
@@ -13,7 +12,8 @@ namespace Shopping.Helpers
         {
             _configuration = configuration;
         }
-        Response IMailHelper.SendMail(string toName, string toEmail, string subject, string body)
+
+        public Response SendMail(string toName, string toEmail, string subject, string body)
         {
             try
             {
@@ -23,23 +23,24 @@ namespace Shopping.Helpers
                 string port = _configuration["Mail:Port"];
                 string password = _configuration["Mail:Password"];
 
-                MimeMessage message = new MimeMessage();
+                MimeMessage message = new();
                 message.From.Add(new MailboxAddress(name, from));
                 message.To.Add(new MailboxAddress(toName, toEmail));
                 message.Subject = subject;
-                BodyBuilder bodyBuilder = new BodyBuilder
+                BodyBuilder bodyBuilder = new()
                 {
                     HtmlBody = body
                 };
                 message.Body = bodyBuilder.ToMessageBody();
 
-                using (SmtpClient client = new SmtpClient())
+                using (SmtpClient client = new())
                 {
                     client.Connect(smtp, int.Parse(port), false);
                     client.Authenticate(from, password);
                     client.Send(message);
                     client.Disconnect(true);
                 }
+
                 return new Response { IsSuccess = true };
             }
             catch (Exception ex)
@@ -54,3 +55,4 @@ namespace Shopping.Helpers
         }
     }
 }
+

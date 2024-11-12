@@ -8,9 +8,9 @@ namespace Shopping.Helpers
     {
         Task<User> GetUserAsync(string email);
 
-		Task<User> GetUserAsync(Guid userId);
+        Task<User> GetUserAsync(Guid userId);
 
-		Task<IdentityResult> AddUserAsync(User user, string password);
+        Task<IdentityResult> AddUserAsync(User user, string password);
 
         Task<User> AddUserAsync(AddUserViewModel model);
 
