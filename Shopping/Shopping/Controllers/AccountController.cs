@@ -1,15 +1,12 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Shopping.Data;
 using Shopping.Common;
 using Shopping.Data.Entities;
 using Shopping.Data.Enums;
 using Shopping.Helpers;
 using Shopping.Models;
-using SignInResult = Microsoft.AspNetCore.Identity.SignInResult;
 using Vereyon.Web;
-
 
 namespace Shopping.Controllers
 {
@@ -94,9 +91,6 @@ namespace Shopping.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return View(model);
-            }
-
             Guid imageId = Guid.Empty;
 
             if (model.ImageFile != null)
@@ -105,8 +99,6 @@ namespace Shopping.Controllers
             }
 
             model.ImageId = imageId;
-
-            // Intenta agregar el usuario
             User user = await _userHelper.AddUserAsync(model);
             if (user == null) // Si no se puede agregar, el correo ya existe
             {

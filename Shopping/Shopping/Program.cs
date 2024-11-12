@@ -5,10 +5,6 @@ using Shopping.Data.Entities;
 using Shopping.Helpers;
 using Vereyon.Web;
 
-internal class Program
-{
-    private static void Main(string[] args)
-    {
         var builder = WebApplication.CreateBuilder(args);
 
         builder.Services.AddControllersWithViews();
@@ -17,7 +13,6 @@ internal class Program
         {
             o.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
         });
-
 
         builder.Services.AddIdentity<User, IdentityRole>(cfg =>
         {
@@ -32,7 +27,6 @@ internal class Program
             cfg.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
             cfg.Lockout.MaxFailedAccessAttempts = 3;
             cfg.Lockout.AllowedForNewUsers = true;
-
         })
             .AddDefaultTokenProviders()
             .AddEntityFrameworkStores<DataContext>();
@@ -50,7 +44,6 @@ internal class Program
                                                  //builder.Services.AddSingleton<SeeDb>(); //Lo inyecta una vez y no lo destruye.
 
         builder.Services.AddFlashMessage();
-
         builder.Services.AddScoped<IUserHelper, UserHelper>();
         builder.Services.AddScoped<ICombosHelper, CombosHelper>();
         builder.Services.AddScoped<IBlogHelper, BlobHelper>();
@@ -76,7 +69,6 @@ internal class Program
         if (!app.Environment.IsDevelopment())
         {
             app.UseExceptionHandler("/Home/Error");
-
             app.UseHsts();
         }
 
@@ -84,7 +76,6 @@ internal class Program
         app.UseHttpsRedirection();
         app.UseStaticFiles();
         app.UseRouting();
-        app.UseAuthorization();
         app.UseAuthentication();
         app.MapControllerRoute(
             name: "default",

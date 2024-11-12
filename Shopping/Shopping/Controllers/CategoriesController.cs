@@ -108,5 +108,4 @@ namespace Shopping.Controllers
             return Json(new { isValid = false, html = ModalHelper.RenderRazorViewToString(this, "AddOrEdit", category) });
         }
     }
-
 }

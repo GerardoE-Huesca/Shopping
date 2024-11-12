@@ -27,7 +27,6 @@ namespace Shopping.Helpers
 		{
 			Stream stream = file.OpenReadStream();
 			return await UploadBlobAsync(stream, containerName);
-			
 		}
 
 		public async Task<Guid> UploadBlobAsync(byte[] file, string containerName)

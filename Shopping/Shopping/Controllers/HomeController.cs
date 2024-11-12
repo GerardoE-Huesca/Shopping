@@ -1,15 +1,12 @@
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Shooping.Common;
 using Shopping.Common;
 using Shopping.Data;
 using Shopping.Data.Entities;
 using Shopping.Helpers;
 using Shopping.Models;
 using System.Diagnostics;
-using System.Drawing.Printing;
 
 namespace Shopping.Controllers
 {

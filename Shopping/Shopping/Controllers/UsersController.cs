@@ -104,7 +104,6 @@ namespace Shopping.Controllers
             return View(model);
         }
 
-
         public JsonResult GetStates(int countryId)
         {
             Country country = _context.Countries
